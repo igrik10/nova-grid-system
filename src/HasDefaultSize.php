@@ -16,7 +16,10 @@ trait HasDefaultSize
      */
     public function availableFields(NovaRequest $request): FieldCollection
     {
-        return parent::availableFields($request)->map(function (Field $item) {
+        return parent::availableFields($request)->map(function ($item) {
+            if (! $item instanceof Field) {
+                return $item;
+            }
             if ($item->component == 'heading-field') {
                 return $item->size('w-full');
             }
