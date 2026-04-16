@@ -2,7 +2,7 @@
   <div :class="elementSize">
     <field-wrapper :stacked="field.stacked">
       <div :class="field.stacked ? 'md:pt-6 md:w-full' : 'md:py-4 md:w-1/4'">
-        <div class="">
+        <div>
           <slot>
             <h4 class="font-normal text-80">{{ label }}</h4>
           </slot>
@@ -33,79 +33,80 @@ export default {
     },
     fieldName: {
       type: String,
-      default: "",
+      default: '',
     },
   },
-  mounted() {
-    // If field has a size, this allows to use flex on card
-    if (this.hasSize & this.$parent.$parent.$parent.selectedTab === undefined) {
-      this.$parent.$parent.$el.classList.add("flex-dom");
-      this.$parent.$parent.$el.classList.add("flex-wrap");
-      this.$parent.$parent.$el.classList.add("flex");
-    }
 
-    //Use for eminiarts/nova-tabs package
-    if (
-      this.hasSize &
-      (this.$parent.$parent.$parent.selectedTab !== undefined)
-    ) {
-       this.$el.classList.add("inline-block");
+  mounted() {
+    // Apply flex layout to the panel container
+    if (this.hasSize) {
+      const panel = this.findPanelContainer()
+      if (panel) {
+        panel.classList.add('flex-dom', 'flex-wrap', 'flex')
+      }
     }
 
     if (this.getRemoveBottomBorder === true) {
-      this.$el.children[0].classList.add("remove-bottom-border");
+      this.$el.children[0]?.classList.add('remove-bottom-border')
     } else if (this.getRemoveBottomBorder === false) {
-      this.$el.children[0].classList.remove("remove-bottom-border");
+      this.$el.children[0]?.classList.remove('remove-bottom-border')
     }
   },
+
+  methods: {
+    findPanelContainer() {
+      let el = this.$el.parentElement
+      for (let i = 0; i < 5 && el; i++) {
+        if (
+          el.classList.contains('card') ||
+          el.classList.contains('rounded-lg') ||
+          el.getAttribute('data-panel')
+        ) {
+          return el
+        }
+        el = el.parentElement
+      }
+      return null
+    },
+  },
+
   computed: {
     label() {
-      return this.fieldName || this.field.name;
+      return this.fieldName || this.field.name
     },
 
     fieldValue() {
       if (
-        this.field.value === "" ||
+        this.field.value === '' ||
         this.field.value === null ||
         this.field.value === undefined
       ) {
-        return false;
+        return false
       }
-
-      return String(this.field.value);
+      return String(this.field.value)
     },
 
     shouldDisplayAsHtml() {
-      return this.field.asHtml;
+      return this.field.asHtml
     },
 
     fieldClasses() {
       return this.fullWidthContent
-        ? this.field.stacked
-          ? "w-full"
-          : "w-4/5"
-        : this.hasSize
-        ? "w-full"
-        : "w-3/4";
+        ? this.field.stacked ? 'w-full' : 'w-4/5'
+        : this.hasSize ? 'w-full' : 'w-3/4'
     },
 
-    /**
-     * Return the size that should be used for the field container.
-     */
     elementSize() {
-      return this.field.size || "w-full";
+      return this.field.size || 'w-full'
     },
 
-    /**
-     * Return if the field has a size
-     */
     hasSize() {
-      return this.field.size !== undefined;
+      return this.field.size !== undefined
     },
 
     getRemoveBottomBorder() {
-      return this.field.removeBottomBorder || null;
+      return this.field.removeBottomBorder || null
     },
   },
-};
+}
 </script>
