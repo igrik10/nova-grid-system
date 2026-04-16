@@ -5,6 +5,7 @@ namespace CodencoDev\NovaGridSystem;
 
 
 use Laravel\Nova\Fields\Field;
+use Laravel\Nova\Fields\FieldCollection;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 trait HasDefaultSize
@@ -12,11 +13,8 @@ trait HasDefaultSize
 
     /**
      * Get the fields that are available for the given request with size meta
-     *
-     * @param NovaRequest $request
-     * @return \Laravel\Nova\Fields\FieldCollection
      */
-    public function availableFields(NovaRequest $request)
+    public function availableFields(NovaRequest $request): FieldCollection
     {
         return parent::availableFields($request)->map(function (Field $item) {
             if ($item->component == 'heading-field') {
