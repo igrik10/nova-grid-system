@@ -68,3 +68,28 @@ div:has(> .w-1\/2) {
 .remove-bottom-border {
   border-bottom: none !important;
 }
+
+// === Nova 5 inner-cell label/value layout =====================================
+// In sized cells the inner FieldWrapper (`flex flex-col md:flex-row`) sizes
+// to its content rather than the cell because the cell becomes a flex
+// container above. Force it to fill the cell, keep label + value on the
+// same row, label width auto (no fixed 1/4 split), value flexes to fill.
+.flex-dom > [class*="w-1\/"],
+.flex-dom > [class*="w-2\/"],
+.flex-dom > [class*="w-3\/"],
+.flex-dom > [class*="w-4\/"] {
+  > .flex.flex-col {
+    width: 100% !important;
+  }
+
+  > .flex.flex-col > div:first-child {
+    width: auto !important;
+    flex-shrink: 0;
+    margin-right: 0.75rem;
+  }
+
+  > .flex.flex-col > div:nth-child(2) {
+    flex: 1 1 auto;
+    width: auto !important;
+  }
+}
