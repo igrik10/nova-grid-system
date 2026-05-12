@@ -16,6 +16,13 @@
       <div class="py-6 px-8" :class="fieldClasses">
         <slot name="field" />
 
+        <help-text
+          class="error-text mt-2 text-danger"
+          v-if="showErrors && hasError"
+        >
+          {{ firstError }}
+        </help-text>
+
         <help-text class="help-text mt-2" v-if="showHelpText">
           {{ field.helpText }}
         </help-text>
@@ -26,12 +33,16 @@
 
 <script>
 export default {
+  inject: { viaParent: { default: null } },
+
   props: {
     field: { type: Object, required: true },
     fieldName: { type: String },
     showHelpText: { type: Boolean, default: true },
     showErrors: { type: Boolean, default: true },
     fullWidthContent: { type: Boolean, default: false },
+    errors: { type: Object, default: () => ({ has: () => false, first: () => '' }) },
+    index: { type: Number, default: null },
   },
 
   mounted() {
@@ -92,6 +103,21 @@ export default {
 
     getRemoveBottomBorder() {
       return this.field.removeBottomBorder || null
+    },
+
+    validationKey() {
+      if (this.viaParent && this.index !== null) {
+        return `${this.viaParent}.${this.index}.fields.${this.field.attribute}`
+      }
+      return this.field.validationKey
+    },
+
+    hasError() {
+      return this.errors.has(this.validationKey)
+    },
+
+    firstError() {
+      if (this.hasError) return this.errors.first(this.validationKey)
     },
   },
 }
